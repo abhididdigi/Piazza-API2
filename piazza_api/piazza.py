@@ -1,6 +1,6 @@
-from .rpc import PiazzaRPC
-from .network import Network
-
+from rpc import PiazzaRPC
+from network import Network
+import os
 
 class Piazza(object):
     """Unofficial Client for Piazza's Internal API
@@ -51,6 +51,7 @@ class Piazza(object):
         :returns: Profile of currently authenticated user
         :rtype: dict
         """
+        print "getting user profule"
         return self._rpc_api.get_user_profile()
 
     def get_user_classes(self):

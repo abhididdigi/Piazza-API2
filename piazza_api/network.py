@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from .rpc import PiazzaRPC
+from rpc import PiazzaRPC
 
 
 ################

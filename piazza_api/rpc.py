@@ -1,11 +1,12 @@
 import getpass
 import json
+import piazza_config
 
 import requests
 import six.moves
+import cookielib
 
-from piazza_api.exceptions import AuthenticationError, NotAuthenticatedError, \
-    RequestError
+from custom_extensions import AuthenticationError, NotAuthenticatedError, RequestError, NoNetworkIDError
 
 
 class PiazzaRPC(object):
@@ -39,6 +40,7 @@ class PiazzaRPC(object):
         :type  password: str
         :param password: The password used for authentication
         """
+
         email = six.moves.input("Email: ") if email is None else email
         password = getpass.getpass() if password is None else password
 
@@ -47,16 +49,23 @@ class PiazzaRPC(object):
             "params": {"email": email,
                        "pass": password}
         }
+
+        print "making the call"
         # If the user/password match, the server respond will contain a
         #  session cookie that you can use to authenticate future requests.
         r = requests.post(
             self.base_api_urls["logic"],
             data=json.dumps(login_data),
         )
+        print r.json()
+
         if r.json()["result"] not in ["OK"]:
             raise AuthenticationError("Could not authenticate.\n{}"
                                       .format(r.json()))
+
         self.cookies = r.cookies
+        print "cookies {}".format(self.cookies)
+
 
     def demo_login(self, auth=None, url=None):
         """Authenticate with a "Share Your Class" URL using a demo user.
@@ -251,7 +260,7 @@ class PiazzaRPC(object):
                 limit=limit,
                 offset=offset,
                 sort=sort
-            )
+            ),
         )
         return self._handle_error(r, "Could not retrieve your feed.")
 
@@ -338,6 +347,7 @@ class PiazzaRPC(object):
 
     def get_user_profile(self):
         """Get profile of the current user"""
+        print "inside get user profule"
         r = self.request(method="user_profile.get_profile")
         return self._handle_error(r, "Could not get user profile.")
 
@@ -367,15 +377,20 @@ class PiazzaRPC(object):
         nid = nid if nid else self._nid
         if data is None:
             data = {}
-
+        self.cookies.set('session_id', piazza_config.piazza_session_id, domain='piazza.com', path='/')
+        print "cookies are {}".format(self.cookies)
+        print "headers are {}".format(piazza_config.piazza_session_id)
         response = requests.post(
             self.base_api_urls[api_type],
             data=json.dumps({
                 "method": method,
                 "params": dict({nid_key: nid}, **data)
             }),
+            headers ={'CSRF-Token': piazza_config.piazza_session_id},
             cookies=self.cookies
         )
+        print response.json()
+        print response.status_code
         return response if return_response else response.json()
 
     ###################
