@@ -19,7 +19,6 @@ Step 4: Use the API as you were using it before.
 
 
 
-
 ## Usage
 
 ```python
