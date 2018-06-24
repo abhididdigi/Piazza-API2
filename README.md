@@ -5,6 +5,21 @@
 Unofficial Client for Piazza's Internal API
 
 
+This is an fork of the unofficial API with a fix that now makes the API to work. (CSRF vulnerability)
+
+Step 1: Open up chrome console and go to network task, and then login into Piazza
+
+Step 2: in the Request Headers for a sample API request, you'll see a new header called `CSRF-Token`.
+ 
+Step 3: Expose this as environment variable on OSX you can do `export piazza_session_id = <token above>`
+
+Step 4: Use the API as you were using it before. 
+
+
+
+
+
+
 ## Usage
 
 ```python
