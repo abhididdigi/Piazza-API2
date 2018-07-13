@@ -51,7 +51,6 @@ class Piazza(object):
         :returns: Profile of currently authenticated user
         :rtype: dict
         """
-        print "getting user profule"
         return self._rpc_api.get_user_profile()
 
     def get_user_classes(self):

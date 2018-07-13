@@ -50,21 +50,21 @@ class PiazzaRPC(object):
                        "pass": password}
         }
 
-        print "making the call"
+
         # If the user/password match, the server respond will contain a
         #  session cookie that you can use to authenticate future requests.
         r = requests.post(
             self.base_api_urls["logic"],
             data=json.dumps(login_data),
         )
-        print r.json()
+
 
         if r.json()["result"] not in ["OK"]:
             raise AuthenticationError("Could not authenticate.\n{}"
                                       .format(r.json()))
 
         self.cookies = r.cookies
-        print "cookies {}".format(self.cookies)
+
 
 
     def demo_login(self, auth=None, url=None):
@@ -347,7 +347,6 @@ class PiazzaRPC(object):
 
     def get_user_profile(self):
         """Get profile of the current user"""
-        print "inside get user profule"
         r = self.request(method="user_profile.get_profile")
         return self._handle_error(r, "Could not get user profile.")
 
@@ -378,8 +377,6 @@ class PiazzaRPC(object):
         if data is None:
             data = {}
         self.cookies.set('session_id', piazza_config.piazza_session_id, domain='piazza.com', path='/')
-        print "cookies are {}".format(self.cookies)
-        print "headers are {}".format(piazza_config.piazza_session_id)
         response = requests.post(
             self.base_api_urls[api_type],
             data=json.dumps({
@@ -389,8 +386,6 @@ class PiazzaRPC(object):
             headers ={'CSRF-Token': piazza_config.piazza_session_id},
             cookies=self.cookies
         )
-        print response.json()
-        print response.status_code
         return response if return_response else response.json()
 
     ###################
